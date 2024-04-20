@@ -2,6 +2,7 @@ package injector
 
 import (
 	"github.com/google/wire"
+
 	"thsr/m/server/receiver"
 )
 

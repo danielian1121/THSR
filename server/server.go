@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"thsr/m/server/receiver"
 )
 

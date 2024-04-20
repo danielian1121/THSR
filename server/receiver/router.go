@@ -1,9 +1,10 @@
 package receiver
 
 import (
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
-	"strings"
 )
 
 var GinRouterSet = wire.NewSet(ProvideRoute, wire.Bind(new(Router), new(*GinRouter)))

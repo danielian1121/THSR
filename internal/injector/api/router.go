@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/google/wire"
+
 	"thsr/m/server/receiver"
 )
 

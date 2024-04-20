@@ -5,6 +5,7 @@ package injector
 
 import (
 	"github.com/google/wire"
+
 	"thsr/m/internal/injector/api"
 	"thsr/m/internal/injector/service"
 )
