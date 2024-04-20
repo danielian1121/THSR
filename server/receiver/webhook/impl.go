@@ -91,5 +91,10 @@ func (im *impl) GetRouteInfos() []receiver.ReceiverInfo {
 			Path:    "/webhook",
 			Handler: im.handleLineWebhook,
 		},
+		{
+			Method:  http.MethodPost,
+			Path:    "/webhook",
+			Handler: im.handleLineWebhook,
+		},
 	}
 }
