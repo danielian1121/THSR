@@ -87,11 +87,6 @@ func (im *impl) handleLineWebhook(c *gin.Context) {
 func (im *impl) GetRouteInfos() []receiver.ReceiverInfo {
 	return []receiver.ReceiverInfo{
 		{
-			Method:  http.MethodGet,
-			Path:    "/webhook",
-			Handler: im.handleLineWebhook,
-		},
-		{
 			Method:  http.MethodPost,
 			Path:    "/webhook",
 			Handler: im.handleLineWebhook,
