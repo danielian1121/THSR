@@ -40,7 +40,7 @@ type GinRouter struct {
 
 func (g *GinRouter) RegisterAPI(engine *gin.Engine) {
 	for _, routeInfo := range g.routesInfo {
-		engine.Handle(routeInfo.Method, g.PrefixPath(), routeInfo.GetFlow()...)
+		engine.Handle(routeInfo.Method, g.generatePath(routeInfo), routeInfo.GetFlow()...)
 	}
 }
 
