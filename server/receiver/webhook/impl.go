@@ -49,16 +49,16 @@ func (im *impl) handleLineWebhook(c *gin.Context) {
 					&messaging_api.ReplyMessageRequest{
 						ReplyToken: e.ReplyToken,
 						Messages: []messaging_api.MessageInterface{
-							messaging_api.TemplateMessage{
+							&messaging_api.TemplateMessage{
 								AltText: message.Text,
-								Template: messaging_api.ConfirmTemplate{
+								Template: &messaging_api.ConfirmTemplate{
 									Text: "liff",
 									Actions: []messaging_api.ActionInterface{
-										messaging_api.UriAction{
+										&messaging_api.UriAction{
 											Label: "Yes",
-											Uri:   "line://app/2004698296-Vv4bvpZ7",
+											Uri:   "https://liff.line.me/2004698296-Vv4bvpZ7",
 										},
-										messaging_api.MessageAction{
+										&messaging_api.MessageAction{
 											Label: "No",
 											Text:  "No!",
 										},
@@ -99,15 +99,16 @@ func (im *impl) handleLineWebhook(c *gin.Context) {
 }
 
 type liffVerifyParm struct {
-	AccessToken string `json:"accessToken"`
+	AccessToken string `json:"accessToken" binding:"required"`
 }
 
 func (im *impl) liffVerify(c *gin.Context) {
 	var param liffVerifyParm
 	if err := c.BindJSON(&param); err != nil {
-		c.JSON(400, gin.H{})
+		c.JSON(420, gin.H{})
 		return
 	}
+	log.Println(param.AccessToken)
 	c.Redirect(http.StatusFound, fmt.Sprintf("https://api.line.me/oauth2/v2.1/verify?access_token=%s", param.AccessToken))
 }
 
