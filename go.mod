@@ -4,6 +4,7 @@ go 1.21.6
 
 require (
 	github.com/gin-gonic/gin v1.9.1
+	github.com/google/wire v0.6.0
 	github.com/line/line-bot-sdk-go/v8 v8.6.0
 )
 

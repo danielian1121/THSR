@@ -1,46 +1,33 @@
-package main
+package webhook
 
 import (
 	"errors"
 	"fmt"
-	"log"
-	"net/http"
-	"os"
-
 	"github.com/gin-gonic/gin"
 	"github.com/line/line-bot-sdk-go/v8/linebot/messaging_api"
 	"github.com/line/line-bot-sdk-go/v8/linebot/webhook"
+	"log"
+	"net/http"
+	"thsr/m/server/receiver"
+	"thsr/m/service/lineBot"
 )
 
-var (
-	defaultBot *messaging_api.MessagingApiAPI
-	token      = os.Getenv("API_TOKEN")
-	secret     = os.Getenv("SECRET_KEY")
-)
-
-func main() {
-	bot, err := messaging_api.NewMessagingApiAPI(token)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defaultBot = bot
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Any("/callback", callback)
-
-	// listen and serve on 0.0.0.0:8080
-	if err := r.Run(); err != nil {
-		panic(err)
-	}
+type impl struct {
+	lineBot lineBot.Service
 }
 
-func callback(c *gin.Context) {
-	cb, err := webhook.ParseRequest(secret, c.Request)
+func ProvideReceiver(
+	lineBot lineBot.Service,
+) Receiver {
+	h := impl{
+		lineBot: lineBot,
+	}
+
+	return &h
+}
+
+func (im *impl) handleLineWebhook(c *gin.Context) {
+	cb, err := webhook.ParseRequest(im.lineBot.GetSecret(), c.Request)
 	if err != nil {
 		if errors.Is(err, webhook.ErrInvalidSignature) {
 			c.JSON(http.StatusBadRequest, err)
@@ -50,12 +37,13 @@ func callback(c *gin.Context) {
 		return
 	}
 
+	bot := im.lineBot.GetBot()
 	for _, event := range cb.Events {
 		switch e := event.(type) {
 		case webhook.MessageEvent:
 			switch message := e.Message.(type) {
 			case webhook.TextMessageContent:
-				if _, err = defaultBot.ReplyMessage(
+				if _, err = bot.ReplyMessage(
 					&messaging_api.ReplyMessageRequest{
 						ReplyToken: e.ReplyToken, Messages: []messaging_api.MessageInterface{
 							messaging_api.TextMessage{
@@ -71,7 +59,7 @@ func callback(c *gin.Context) {
 			case webhook.StickerMessageContent:
 				replyMessage := fmt.Sprintf("sticker id is %s, stickerResourceType is %s", message.StickerId, message.StickerResourceType)
 
-				if _, err = defaultBot.ReplyMessage(
+				if _, err = bot.ReplyMessage(
 					&messaging_api.ReplyMessageRequest{
 						ReplyToken: e.ReplyToken,
 						Messages: []messaging_api.MessageInterface{
@@ -91,5 +79,15 @@ func callback(c *gin.Context) {
 		default:
 			log.Printf("Unsupported message: %T\n", event)
 		}
+	}
+}
+
+func (im *impl) GetRouteInfos() []receiver.ReceiverInfo {
+	return []receiver.ReceiverInfo{
+		{
+			Method:  http.MethodGet,
+			Path:    "/webhook",
+			Handler: im.handleLineWebhook,
+		},
 	}
 }
