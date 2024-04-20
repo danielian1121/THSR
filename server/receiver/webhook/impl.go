@@ -47,9 +47,23 @@ func (im *impl) handleLineWebhook(c *gin.Context) {
 			case webhook.TextMessageContent:
 				if _, err = bot.ReplyMessage(
 					&messaging_api.ReplyMessageRequest{
-						ReplyToken: e.ReplyToken, Messages: []messaging_api.MessageInterface{
-							messaging_api.TextMessage{
-								Text: message.Text,
+						ReplyToken: e.ReplyToken,
+						Messages: []messaging_api.MessageInterface{
+							messaging_api.TemplateMessage{
+								AltText: message.Text,
+								Template: messaging_api.ConfirmTemplate{
+									Text: "liff",
+									Actions: []messaging_api.ActionInterface{
+										messaging_api.UriAction{
+											Label: "Yes",
+											Uri:   "line://app/2004698296-Vv4bvpZ7",
+										},
+										messaging_api.MessageAction{
+											Label: "No",
+											Text:  "No!",
+										},
+									},
+								},
 							},
 						},
 					},
@@ -84,12 +98,30 @@ func (im *impl) handleLineWebhook(c *gin.Context) {
 	}
 }
 
+type liffVerifyParm struct {
+	AccessToken string `json:"accessToken"`
+}
+
+func (im *impl) liffVerify(c *gin.Context) {
+	var param liffVerifyParm
+	if err := c.BindJSON(&param); err != nil {
+		c.JSON(400, gin.H{})
+		return
+	}
+	c.Redirect(http.StatusFound, fmt.Sprintf("https://api.line.me/oauth2/v2.1/verify?access_token=%s", param.AccessToken))
+}
+
 func (im *impl) GetRouteInfos() []receiver.ReceiverInfo {
 	return []receiver.ReceiverInfo{
 		{
 			Method:  http.MethodPost,
 			Path:    "/webhook",
 			Handler: im.handleLineWebhook,
+		},
+		{
+			Method:  http.MethodPost,
+			Path:    "/liff/verify",
+			Handler: im.liffVerify,
 		},
 	}
 }
