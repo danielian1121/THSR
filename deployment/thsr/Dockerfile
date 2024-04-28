@@ -25,4 +25,6 @@ RUN --mount=type=secret,id=accesskey \
     echo ACCESS_KEY=$(cat /run/secrets/accesskey) >> ./.env
 
 COPY --from=builder /app/app ./server
+COPY --from=builder /app/static ./static
+
 ENTRYPOINT ["./server"]
