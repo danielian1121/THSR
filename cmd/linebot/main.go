@@ -4,12 +4,11 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/joho/godotenv"
+
 	"thsr/m/configs"
 	"thsr/m/internal/injector"
 	"thsr/m/server"
-	"thsr/m/service/keyManager"
-
-	"github.com/joho/godotenv"
 )
 
 func init() {
@@ -22,8 +21,7 @@ func init() {
 }
 
 func main() {
-	manager := keyManager.New()
-	configs.InitConfigs(manager)
+	configs.InitConfigs()
 
 	receiver := injector.BuildInjector()
 	server.Init(receiver.Receiver)

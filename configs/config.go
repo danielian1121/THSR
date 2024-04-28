@@ -20,7 +20,8 @@ type request struct {
 	callback func(map[string]string)
 }
 
-func InitConfigs(manager keyManager.Service) {
+func InitConfigs() {
+	manager := keyManager.New()
 	register(manager)
 }
 
