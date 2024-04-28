@@ -1,8 +1,8 @@
 package configs
 
-import (
-	"flag"
-	"os"
+const (
+	token  = "linebot/CHANNEL_ACCESS_TOKEN"
+	secret = "linebot/CHANNEL_SECRET"
 )
 
 type LineBotConfig struct {
@@ -10,7 +10,12 @@ type LineBotConfig struct {
 	Secret string
 }
 
-func lineBotFlags() {
-	flag.StringVar(&C.LineBot.Token, "line_bot_token", os.Getenv("LINE_BOT_TOKEN"), "line bot token")
-	flag.StringVar(&C.LineBot.Secret, "line_bot_channel_secret", os.Getenv("LINE_BOT_CHANNEL_SECRET"), "channel secret")
+func lineBotFlags() request {
+	return request{
+		keys: []string{token, secret},
+		callback: func(m map[string]string) {
+			C.LineBot.Token = m[token]
+			C.LineBot.Secret = m[secret]
+		},
+	}
 }

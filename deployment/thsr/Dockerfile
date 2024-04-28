@@ -18,5 +18,11 @@ RUN go build -tags netgo -ldflags '-s -w' -o app ./cmd/linebot
 
 FROM alpine:latest AS release
 
+RUN --mount=type=secret,id=accessid \
+    echo ACCESS_ID=$(cat /run/secrets/accessid) >> ./.env
+
+RUN --mount=type=secret,id=accesskey \
+    echo ACCESS_KEY=$(cat /run/secrets/accesskey) >> ./.env
+
 COPY --from=builder /app/app ./server
 ENTRYPOINT ["./server"]
