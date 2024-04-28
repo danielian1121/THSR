@@ -9,21 +9,6 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Restore Golang Image Cache if it exists
-        id: cache-docker-golang
-        uses: actions/cache@v3
-        with:
-          path: ci/cache/docker/golang
-          key: cache-docker-golang-1.21
-
-      - name: Update Golang Image Cache if cache miss
-        if: steps.cache-docker-golang.outputs.cache-hit != 'true'
-        run: docker pull golang:1.21 && mkdir -p ci/cache/docker/golang && docker image save golang:1.21 --output ./ci/cache/docker/golang/golang-1.21.tar
-
-      - name: Use Golang Image Cache if cache hit
-        if: steps.cache-docker-golang.outputs.cache-hit == 'true'
-        run: docker image load --input ./ci/cache/docker/golang/golang-1.21.tar
-
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
