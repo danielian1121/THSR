@@ -28,7 +28,7 @@ jobs:
           file: ./deployment/thsr/Dockerfile
           push: true
           tags: danielian1121/thsr:latest
-          platform: linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/arm64
           secrets: |
             "accessid=${{ secrets.KEY_ACCESS_ID }}"
             "accesskey=${{ secrets.KEY_ACCESS_KEY }}"
