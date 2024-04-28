@@ -28,6 +28,8 @@ jobs:
           file: ./deployment/thsr/Dockerfile
           push: true
           tags: danielian1121/thsr:latest
+          cache-from: type=registry,ref=danielian1121/thsr:latest
+          cache-to: type=inline
           secrets: |
             "accessid=${{ secrets.KEY_ACCESS_ID }}"
             "accesskey=${{ secrets.KEY_ACCESS_KEY }}"
