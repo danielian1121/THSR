@@ -31,7 +31,7 @@ function initializeApp() {
             'expires_in:' + data.expires_in + '<br>';
         liff.getProfile().then(profile => {
             result.innerHTML +=
-                'userID' + profile.userId
+                'userID:' + profile.userId
         })
     });
 }
