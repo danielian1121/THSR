@@ -29,6 +29,9 @@ function initializeApp() {
             'scope:' + data.scope + '<br>' +
             'client_id:' + data.client_id + '<br>' +
             'expires_in:' + data.expires_in + '<br>';
+        liff.getProfile().then(profile => {
+            console.log(profile)
+        })
     });
 }
 
